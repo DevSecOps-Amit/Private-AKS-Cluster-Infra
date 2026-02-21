@@ -11,7 +11,7 @@ variable "location" {
   type = string
 }
 variable "user_node_pools" {
-  type = map(string)
+  type = list(string)
 }
 variable "auto_scaling" {
   type = bool
