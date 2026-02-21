@@ -1,8 +1,18 @@
-variable "vm_size" {}
-variable "aks_name" {}
-variable "rg_name" {}
-variable "location" {}
-variable "user_node_pools" {}
+variable "vm_size" {
+  type = string 
+}
+variable "aks_name" {
+  type = string
+}
+variable "rg_name" {
+  type = string
+}
+variable "location" {
+  type = string
+}
+variable "user_node_pools" {
+  type = bool
+}
 variable "auto_scaling" {
   type = bool
 }
@@ -11,7 +21,9 @@ variable "system_node_pool" {
 }
 variable "subnet_id" {}
 
-variable "log_analytics_id" {}
+variable "log_analytics_id" {
+  type = string
+}
 variable "kubernetes_version" {
   type = string
 }
