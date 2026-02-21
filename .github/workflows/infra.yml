@@ -14,10 +14,11 @@ permissions:
 env:
   TF_WORKING_DIR: Environment/Dev-Private-AKS
 
-# -------------------------------
+# =====================================================
 # TFLINT JOB
-# -------------------------------
+# =====================================================
 jobs:
+
   tflint:
     name: Terraform Lint (TFLint)
     runs-on: ubuntu-latest
@@ -39,9 +40,10 @@ jobs:
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: tflint -f compact
 
-# -------------------------------
+# =====================================================
 # CHECKOV JOB
-# -------------------------------
+# =====================================================
+
   checkov:
     name: Terraform Security Scan (Checkov)
     runs-on: ubuntu-latest
@@ -65,9 +67,10 @@ jobs:
         with:
           sarif_file: checkov.sarif
 
-# -------------------------------
-# TERRAFORM PLAN JOB
-# -------------------------------
+# =====================================================
+# TERRAFORM PLAN JOB (Branch Based OIDC)
+# =====================================================
+
   terraform-plan:
     name: Terraform Init & Plan
     runs-on: ubuntu-latest
@@ -77,7 +80,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Azure Login (OIDC)
+      - name: Debug OIDC Info
+        run: |
+          echo "Repository: ${{ github.repository }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "Workflow: ${{ github.workflow }}"
+
+      - name: Azure Login (OIDC - Branch)
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
@@ -91,6 +100,10 @@ jobs:
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform init
 
+      - name: Terraform Validate
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform validate
+
       - name: Terraform Plan
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform plan -out=tfplan
@@ -101,9 +114,10 @@ jobs:
           name: tfplan
           path: ${{ env.TF_WORKING_DIR }}/tfplan
 
-# -------------------------------
-# TERRAFORM APPLY (Manual Approval Required)
-# -------------------------------
+# =====================================================
+# TERRAFORM APPLY (Environment Based OIDC + Manual Approval)
+# =====================================================
+
   terraform-apply:
     name: Terraform Apply (Manual Approval Required)
     runs-on: ubuntu-latest
@@ -117,7 +131,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Azure Login (OIDC)
+      - name: Azure Login (OIDC - Environment)
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
@@ -140,7 +154,3 @@ jobs:
       - name: Terraform Apply
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform apply tfplan
-
-      # - name: Terraform Destroy
-      #   working-directory: ${{ env.TF_WORKING_DIR }}
-      #   run: terraform destroy -auto-approve
