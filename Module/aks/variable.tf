@@ -11,8 +11,17 @@ variable "location" {
   type = string
 }
 variable "user_node_pools" {
-  type = list(string)
-}
+  description = "User node pools configuration"
+
+  type = map(object({
+    name         = string
+    vm_size      = string
+    node_count   = number
+    auto_scaling = bool
+    min_count    = number
+    max_count    = number
+  }))
+} 
 variable "auto_scaling" {
   type = bool
 }

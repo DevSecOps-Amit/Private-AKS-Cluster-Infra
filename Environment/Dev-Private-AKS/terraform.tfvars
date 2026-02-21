@@ -26,4 +26,3 @@ user_node_pools = {
 
 vm_size = "Standard_D4s_v5"
 auto_scaling = true
-aks_principal_id = "11111111-1111-1111-1111-111111111111"
