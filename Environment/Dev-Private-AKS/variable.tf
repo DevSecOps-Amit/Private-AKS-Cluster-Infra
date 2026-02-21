@@ -36,6 +36,10 @@ variable "system_node_pool" {
 
 
 
-variable "vnet_cidr" {}
+variable "vnet_cidr" {
+    type = string
+}
 
-variable "aks_subnet_cidr" {}
+variable "aks_subnet_cidr" {
+    type = string
+}
